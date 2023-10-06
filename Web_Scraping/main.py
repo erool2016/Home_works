@@ -2,7 +2,8 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from fake_headers import Headers
-id_regex = re.compile(r"\d+")
+import json
+#id_regex = re.compile(r"\d+")
 
 headers_gen = Headers(os="win", browser="chrome")
 url = 'https://spb.hh.ru/search/vacancy?text=python&area=1&area=2'
@@ -42,10 +43,10 @@ def check_cont(dict):
         if item in words:
             if check_list(dict) is False:
                 final_list.append(dict)
-                print(f'yes,заголовок{dict["title"]} добавлен в список final_list')
+                # print(f'yes,заголовок{dict["title"]} добавлен в список final_list')
             else:
-                print(f'yes,заголовок{dict["title"]} найдено в списке {final_list}')
-
+                # print(f'yes,заголовок{dict["title"]} найдено в списке {final_list}')
+                continue
 
 
 def check_list(dict):
@@ -59,12 +60,22 @@ def check_list(dict):
     return False
 
 
-
+def save_json_file(final_list):
+    print('final list',final_list)
+    dict_for_save = {}
+    dict_for_save['list'] = []
+    for item in final_list:
+        dict_for_save['list'].append(item)
+    print(dict_for_save)
+    with open('final_list.json', 'w') as outfile:
+        json.dump(dict_for_save, outfile)
+    print(f'файл final_list.json сохранен')
 
 
 if __name__ == '__main__':
 
     print(soup_obj(url))
-    print(f'итоговый список, всего {len(final_list)}')
-    for item in final_list:
-        print(f'{item["title"]}\n{item["href"]}')
+    save_json_file(final_list)
+    # print(f'итоговый список, всего {len(final_list)}')
+    # for item in final_list:
+    #     print(f'{item["title"]}\n{item["href"]}')
